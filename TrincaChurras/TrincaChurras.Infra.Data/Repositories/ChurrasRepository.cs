@@ -1,7 +1,9 @@
 ﻿using Microsoft.Azure.Cosmos;
+using Microsoft.Azure.Cosmos.Serialization.HybridRow.Schemas;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,6 +32,10 @@ namespace TrincaChurras.Infra.Data.Repositories
 
                 if (churrasco != null)
                 {
+                    if (!churrasco.SocioConfirmou)
+                    {
+                        throw new ValidationException("Sócio não deu aval");
+                    }
                     var participante = churrasco.Participantes.Where(x => x.IdUser == idUser).FirstOrDefault();
 
                     if (participante != null)
@@ -44,6 +50,10 @@ namespace TrincaChurras.Infra.Data.Repositories
 
                     _context.Update(churrasco);
                     await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new ValidationException("Churrasco inexistente");
                 }
             }
         }
@@ -86,6 +96,11 @@ namespace TrincaChurras.Infra.Data.Repositories
 
                 if (churrasco != null)
                 {
+                    if (!churrasco.SocioConfirmou)
+                    {
+                        throw new ValidationException("Sócio não deu aval");
+                    }
+
                     var participante = churrasco.Participantes.Where(x => x.IdUser == idUser).FirstOrDefault();
 
                     if (participante != null)
@@ -99,6 +114,10 @@ namespace TrincaChurras.Infra.Data.Repositories
                     }
                     _context.Update(churrasco);
                     await _context.SaveChangesAsync();
+                }
+                else
+                {
+                    throw new ValidationException("Churrasco inexistente");
                 }
             }
         }
